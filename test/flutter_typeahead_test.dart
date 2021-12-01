@@ -52,10 +52,21 @@ class TestPageState extends State<TestPage> {
                   else
                     return [];
                 },
+                suggestionsCallback2: (pattern) {
+                  if (pattern.length > 0)
+                    return [pattern + 'aaaaaaaa', pattern + 'bbbbbbb'];
+                  else
+                    return [];
+                },
                 noItemsFoundBuilder: (context) => const SizedBox(),
                 itemBuilder: (context, String suggestion) {
                   return ListTile(
                     title: Text(suggestion),
+                  );
+                },
+                itemBuilder2: (context, String suggestion) {
+                  return ListTile(
+                    title: Text(suggestion + ' __'),
                   );
                 },
                 onSuggestionSelected: (String suggestion) =>

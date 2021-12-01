@@ -269,7 +269,9 @@ class TypeAheadFormField<T> extends FormField<String> {
       SuggestionsBoxController? suggestionsBoxController,
       required SuggestionSelectionCallback<T> onSuggestionSelected,
       required ItemBuilder<T> itemBuilder,
+      required ItemBuilder<T> itemBuilder2,
       required SuggestionsCallback<T> suggestionsCallback,
+      required SuggestionsCallback<T> suggestionsCallback2,
       double suggestionsBoxVerticalOffset: 5.0,
       this.textFieldConfiguration: const TextFieldConfiguration(),
       AnimationTransitionBuilder? transitionBuilder,
@@ -323,6 +325,7 @@ class TypeAheadFormField<T> extends FormField<String> {
                 onSuggestionSelected: onSuggestionSelected,
                 itemBuilder: itemBuilder,
                 suggestionsCallback: suggestionsCallback,
+                suggestionsCallback2: suggestionsCallback2,
                 animationStart: animationStart,
                 animationDuration: animationDuration,
                 direction: direction,
@@ -336,6 +339,7 @@ class TypeAheadFormField<T> extends FormField<String> {
                 autoFlipDirection: autoFlipDirection,
                 hideKeyboard: hideKeyboard,
                 minCharsForSuggestions: minCharsForSuggestions,
+                itemBuilder2: itemBuilder2,
               );
             });
 
@@ -439,6 +443,7 @@ class TypeAheadField<T> extends StatefulWidget {
   /// }
   /// ```
   final SuggestionsCallback<T> suggestionsCallback;
+  final SuggestionsCallback<T> suggestionsCallback2;
 
   /// Called when a suggestion is tapped.
   ///
@@ -481,6 +486,7 @@ class TypeAheadField<T> extends StatefulWidget {
   /// }
   /// ```
   final ItemBuilder<T> itemBuilder;
+  final ItemBuilder<T> itemBuilder2;
 
   /// used to control the scroll behavior of item-builder list
   final ScrollController? scrollController;
@@ -680,7 +686,9 @@ class TypeAheadField<T> extends StatefulWidget {
   TypeAheadField(
       {Key? key,
       required this.suggestionsCallback,
+      required this.suggestionsCallback2,
       required this.itemBuilder,
+      required this.itemBuilder2,
       required this.onSuggestionSelected,
       this.textFieldConfiguration: const TextFieldConfiguration(),
       this.suggestionsBoxDecoration: const SuggestionsBoxDecoration(),
@@ -853,17 +861,19 @@ class _TypeAheadFieldState<T> extends State<TypeAheadField<T>>
         errorBuilder: widget.errorBuilder,
         transitionBuilder: widget.transitionBuilder,
         suggestionsCallback: widget.suggestionsCallback,
+        suggestionsCallback2: widget.suggestionsCallback2,
         animationDuration: widget.animationDuration,
         animationStart: widget.animationStart,
         getImmediateSuggestions: widget.getImmediateSuggestions,
         onSuggestionSelected: (T selection) {
           if (!widget.keepSuggestionsOnSuggestionSelected) {
-            this._effectiveFocusNode!.unfocus();
-            this._suggestionsBox!.close();
+            this._effectiveFocusNode?.unfocus();
+            this._suggestionsBox?.close();
           }
           widget.onSuggestionSelected(selection);
         },
         itemBuilder: widget.itemBuilder,
+        itemBuilder2: widget.itemBuilder,
         direction: _suggestionsBox!.direction,
         hideOnLoading: widget.hideOnLoading,
         hideOnEmpty: widget.hideOnEmpty,
@@ -961,6 +971,7 @@ class _SuggestionsList<T> extends StatefulWidget {
   final bool getImmediateSuggestions;
   final SuggestionSelectionCallback<T>? onSuggestionSelected;
   final SuggestionsCallback<T>? suggestionsCallback;
+  final SuggestionsCallback<T>? suggestionsCallback2;
   final ItemBuilder<T>? itemBuilder;
   final ItemBuilder<T>? itemBuilder2;
   final ScrollController? scrollController;
@@ -985,6 +996,7 @@ class _SuggestionsList<T> extends StatefulWidget {
     this.getImmediateSuggestions: false,
     this.onSuggestionSelected,
     this.suggestionsCallback,
+    this.suggestionsCallback2,
     this.itemBuilder,
     this.itemBuilder2,
     this.scrollController,
@@ -1011,6 +1023,7 @@ class _SuggestionsList<T> extends StatefulWidget {
 class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
     with SingleTickerProviderStateMixin {
   Iterable<T>? _suggestions;
+  Iterable<T>? _suggestions2;
   late bool _suggestionsValid;
   late VoidCallback _controllerListener;
   Timer? _debounceTimer;
@@ -1035,6 +1048,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
           setState(() {
             _isLoading = false;
             _suggestions = null;
+            _suggestions2 = null;
             _suggestionsValid = true;
           });
         }
@@ -1109,11 +1123,14 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
       });
 
       Iterable<T>? suggestions;
+      Iterable<T>? suggestions2;
       Object? error;
 
       try {
         suggestions =
             await widget.suggestionsCallback!(widget.controller!.text);
+        suggestions2 =
+            await widget.suggestionsCallback2!(widget.controller!.text);
       } catch (e) {
         error = e;
       }
@@ -1131,6 +1148,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
           this._error = error;
           this._isLoading = false;
           this._suggestions = suggestions;
+          this._suggestions2 = suggestions2;
         });
       }
     }
@@ -1147,7 +1165,10 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
   Widget build(BuildContext context) {
     bool isEmpty =
         this._suggestions?.length == 0 && widget.controller!.text == "";
-    if ((this._suggestions == null || isEmpty) &&
+    bool isEmptySuggestion =
+        this._suggestions2?.length == 0 && widget.controller!.text == "";
+    if (((this._suggestions == null && this._suggestions2 == null) ||
+            (isEmpty && isEmptySuggestion)) &&
         this._isLoading == false &&
         this._error == null) return Container();
 
@@ -1164,7 +1185,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
       } else {
         child = createErrorWidget();
       }
-    } else if (this._suggestions!.isEmpty) {
+    } else if (this._suggestions!.isEmpty && this._suggestions2!.isEmpty) {
       if (widget.hideOnEmpty!) {
         child = Container(height: 0);
       } else {
@@ -1265,12 +1286,13 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
   }
 
   Widget createSuggestionsWidget() {
-    Widget child = Column(
+    Widget child = ListView(
       children: [
-        Container(
-          color: Colors.grey,
-          child: Text('Places'),
-        ),
+        if (this._suggestions!.isNotEmpty)
+          Container(
+            color: Colors.grey,
+            child: Text('Places'),
+          ),
         ListView(
           padding: EdgeInsets.zero,
           primary: false,
@@ -1288,10 +1310,11 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
             );
           }).toList(),
         ),
-        Container(
-          color: Colors.grey,
-          child: Text('Listings'),
-        ),
+        if (this._suggestions2!.isNotEmpty)
+          Container(
+            color: Colors.grey,
+            child: Text('Listings'),
+          ),
         ListView(
           padding: EdgeInsets.zero,
           primary: false,
@@ -1300,11 +1323,11 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
           reverse: widget.suggestionsBox!.direction == AxisDirection.down
               ? false
               : true, // reverses the list to start at the bottom
-          children: this._suggestions!.map((T suggestion) {
+          children: this._suggestions2!.map((T suggestion2) {
             return InkWell(
-              child: widget.itemBuilder2!(context, suggestion),
+              child: widget.itemBuilder2!(context, suggestion2),
               onTap: () {
-                widget.onSuggestionSelected!(suggestion);
+                widget.onSuggestionSelected!(suggestion2);
               },
             );
           }).toList(),

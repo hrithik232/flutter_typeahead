@@ -59,6 +59,9 @@ class NavigationExample extends StatelessWidget {
             suggestionsCallback: (pattern) async {
               return await BackendService.getSuggestions(pattern);
             },
+            suggestionsCallback2: (pattern) async {
+              return await BackendService.getSuggestions2(pattern);
+            },
             itemBuilder: (context, Map<String, String> suggestion) {
               return ListTile(
                 leading: Icon(Icons.shopping_cart),
@@ -69,6 +72,14 @@ class NavigationExample extends StatelessWidget {
             onSuggestionSelected: (Map<String, String> suggestion) {
               Navigator.of(context).push<void>(MaterialPageRoute(
                   builder: (context) => ProductPage(product: suggestion)));
+            },
+            itemBuilder2:
+                (BuildContext context, Map<String, String> suggestion) {
+              return ListTile(
+                leading: Icon(Icons.shopping_cart),
+                title: Text(suggestion['name']! + " __"),
+                subtitle: Text('\$${suggestion['price']}'),
+              );
             },
           ),
         ],
@@ -110,6 +121,11 @@ class _FormExampleState extends State<FormExample> {
                   title: Text(suggestion),
                 );
               },
+              itemBuilder2: (context, String suggestion) {
+                return ListTile(
+                  title: Text(suggestion + " __"),
+                );
+              },
               transitionBuilder: (context, suggestionsBox, controller) {
                 return suggestionsBox;
               },
@@ -119,6 +135,9 @@ class _FormExampleState extends State<FormExample> {
               validator: (value) =>
                   value!.isEmpty ? 'Please select a city' : null,
               onSaved: (value) => this._selectedCity = value,
+              suggestionsCallback2: (String pattern) {
+                return CitiesService.getSuggestions2(pattern);
+              },
             ),
             SizedBox(
               height: 10.0,
