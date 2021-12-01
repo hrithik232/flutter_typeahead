@@ -1265,7 +1265,10 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
   Widget createSuggestionsWidget() {
     Widget child = Column(
       children: [
-        Text('Places'),
+        Container(
+          color: Colors.grey,
+          child: Text('Places'),
+        ),
         ListView(
           padding: EdgeInsets.zero,
           primary: false,
@@ -1282,7 +1285,11 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
               },
             );
           }).toList(),
-        )
+        ),
+        Container(
+          color: Colors.grey,
+          child: Text('Listings'),
+        ),
       ],
     );
 
