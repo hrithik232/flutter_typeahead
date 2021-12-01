@@ -962,6 +962,7 @@ class _SuggestionsList<T> extends StatefulWidget {
   final SuggestionSelectionCallback<T>? onSuggestionSelected;
   final SuggestionsCallback<T>? suggestionsCallback;
   final ItemBuilder<T>? itemBuilder;
+  final ItemBuilder<T>? itemBuilder2;
   final ScrollController? scrollController;
   final SuggestionsBoxDecoration? decoration;
   final Duration? debounceDuration;
@@ -985,6 +986,7 @@ class _SuggestionsList<T> extends StatefulWidget {
     this.onSuggestionSelected,
     this.suggestionsCallback,
     this.itemBuilder,
+    this.itemBuilder2,
     this.scrollController,
     this.decoration,
     this.debounceDuration,
@@ -1300,7 +1302,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
               : true, // reverses the list to start at the bottom
           children: this._suggestions!.map((T suggestion) {
             return InkWell(
-              child: widget.itemBuilder!(context, suggestion),
+              child: widget.itemBuilder2!(context, suggestion),
               onTap: () {
                 widget.onSuggestionSelected!(suggestion);
               },
