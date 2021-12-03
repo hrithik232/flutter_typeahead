@@ -873,7 +873,7 @@ class _TypeAheadFieldState<T> extends State<TypeAheadField<T>>
           widget.onSuggestionSelected(selection);
         },
         itemBuilder: widget.itemBuilder,
-        itemBuilder2: widget.itemBuilder,
+        itemBuilder2: widget.itemBuilder2,
         direction: _suggestionsBox!.direction,
         hideOnLoading: widget.hideOnLoading,
         hideOnEmpty: widget.hideOnEmpty,
@@ -1302,6 +1302,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
               ? false
               : true, // reverses the list to start at the bottom
           children: this._suggestions!.map((T suggestion) {
+            print("$suggestion");
             return InkWell(
               child: widget.itemBuilder!(context, suggestion),
               onTap: () {
@@ -1324,6 +1325,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
               ? false
               : true, // reverses the list to start at the bottom
           children: this._suggestions2!.map((T suggestion2) {
+            print("$suggestion2");
             return InkWell(
               child: widget.itemBuilder2!(context, suggestion2),
               onTap: () {

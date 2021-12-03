@@ -121,9 +121,9 @@ class _FormExampleState extends State<FormExample> {
                   title: Text(suggestion),
                 );
               },
-              itemBuilder2: (context, String suggestion) {
+              itemBuilder2: (context, String suggestion2) {
                 return ListTile(
-                  title: Text(suggestion + " __"),
+                  trailing: Text(suggestion2 + " __"),
                 );
               },
               transitionBuilder: (context, suggestionsBox, controller) {
