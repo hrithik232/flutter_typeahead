@@ -1036,8 +1036,6 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
 
   _SuggestionsListState() {
     this._controllerListener = () {
-      // If we came here because of a change in selected text, not because of
-      // actual change in text
       if (widget.controller!.text == this._lastTextValue) return;
 
       this._lastTextValue = widget.controller!.text;
@@ -1266,6 +1264,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
             padding: const EdgeInsets.all(8.0),
             child: Text(
               'Error: ${this._error}',
+              textScaleFactor: 1.0,
               style: TextStyle(color: Theme.of(context).errorColor),
             ),
           );
@@ -1277,7 +1276,8 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
         : Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              'Enter atleast 4 characters',
+              'No Listings Found',
+              textScaleFactor: 1.0,
               textAlign: TextAlign.center,
               style: TextStyle(
                   color: Theme.of(context).disabledColor, fontSize: 18.0),
@@ -1291,7 +1291,10 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
         if (this._suggestions!.isNotEmpty)
           Container(
             color: Colors.grey,
-            child: Text('Places'),
+            child: Text(
+              'Places',
+              textScaleFactor: 1.0,
+            ),
           ),
         ListView(
           padding: EdgeInsets.zero,
@@ -1314,7 +1317,10 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
         if (this._suggestions2!.isNotEmpty)
           Container(
             color: Colors.grey,
-            child: Text('Listings'),
+            child: Text(
+              'Listings',
+              textScaleFactor: 1.0,
+            ),
           ),
         ListView(
           padding: EdgeInsets.zero,

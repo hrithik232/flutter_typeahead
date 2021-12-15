@@ -65,8 +65,8 @@ class NavigationExample extends StatelessWidget {
             itemBuilder: (context, Map<String, String> suggestion) {
               return ListTile(
                 leading: Icon(Icons.shopping_cart),
-                title: Text(suggestion['name']!),
-                subtitle: Text('\$${suggestion['price']}'),
+                title: Text(suggestion['name']!, textScaleFactor: 1.0,),
+                subtitle: Text('\$${suggestion['price']}', textScaleFactor: 1.0,),
               );
             },
             onSuggestionSelected: (Map<String, String> suggestion) {
@@ -77,8 +77,8 @@ class NavigationExample extends StatelessWidget {
                 (BuildContext context, Map<String, String> suggestion) {
               return ListTile(
                 leading: Icon(Icons.shopping_cart),
-                title: Text(suggestion['name']! + " __"),
-                subtitle: Text('\$${suggestion['price']}'),
+                title: Text(suggestion['name']! + " __", textScaleFactor: 1.0,),
+                subtitle: Text('\$${suggestion['price']}', textScaleFactor: 1.0,),
               );
             },
           ),
