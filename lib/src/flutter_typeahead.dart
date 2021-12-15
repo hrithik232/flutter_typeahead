@@ -227,6 +227,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
@@ -1291,6 +1292,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
         if (this._suggestions!.isNotEmpty)
           Container(
             color: Colors.grey,
+            padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 5.0),
             child: Text(
               'Places',
               textScaleFactor: 1.0,
@@ -1317,6 +1319,7 @@ class _SuggestionsListState<T> extends State<_SuggestionsList<T>>
         if (this._suggestions2!.isNotEmpty)
           Container(
             color: Colors.grey,
+            padding: EdgeInsets.only(top: 5.0, bottom: 5.0, left: 5.0),
             child: Text(
               'Listings',
               textScaleFactor: 1.0,
